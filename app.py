@@ -114,10 +114,10 @@ def login():
 def logout():
     """Handle logout of user."""
 
-    #remove user from session
+    # remove user from session
     do_logout()
 
-    #redirect to login page
+    # redirect to login page
     flash("You successfully logged out.")
     return redirect("/login")
 
@@ -160,7 +160,7 @@ def users_show(user_id):
         messages = user.show_messages()
     # snagging messages in order from the database;
     # user.messages won't be in order by default
-    
+
     # If the current user is on their page,
     # they can see their direct messages
     # else they cant see the messages
@@ -233,16 +233,16 @@ def stop_following(follow_id):
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
-    
+
     user = User.query.filter_by(username=g.user.username).first()
-    
+
     form = UserUpdateForm(obj=user)
 
     if form.validate_on_submit():
         password = form.password.data
 
         authenticated = user.authenticate(g.user.username, password)
-        
+
         if authenticated:
             user.username = form.username.data
             user.email = form.email.data
@@ -253,11 +253,10 @@ def profile():
             db.session.commit()
 
             return redirect(f"/users/{g.user.id}")
-        
+
         else:
             flash("Not authenticated")
             return redirect('/')
-
 
     return render_template("users/edit.html", form=form)
 
@@ -277,11 +276,11 @@ def delete_user():
 
     return redirect("/signup")
 
+
 @app.route('/users/<int:user_id>/likes')
 def like_count(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('users/likes.html', user=user)
-
 
 
 ##############################################################################
@@ -337,15 +336,16 @@ def messages_destroy(message_id):
 def add_like(msg_id):
     """ If user clicks button check if message exists in liked message table. if a exists, remove from db. Else add to db"""
 
-    message_exists = LikedMessage.query.filter_by(message_id=msg_id, user_id=g.user.id).first()
-    
+    message_exists = LikedMessage.query.filter_by(
+        message_id=msg_id, user_id=g.user.id).first()
+
     if message_exists:
         db.session.delete(message_exists)
-    
+
     else:
         new_messsage = LikedMessage(message_id=msg_id, user_id=g.user.id)
         db.session.add(new_messsage)
-    
+
     db.session.commit()
     return redirect('/')
 
@@ -360,7 +360,6 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of followees
     """
- 
 
     if g.user:
 
@@ -370,7 +369,7 @@ def homepage():
         # grabs all messages for user and user following
         messages = (Message
                     .query
-                    .filter(or_(Message.user_id.in_(user_following), Message.user_id==g.user.id))
+                    .filter(or_(Message.user_id.in_(user_following), Message.user_id == g.user.id))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
@@ -397,6 +396,7 @@ def add_header(req):
     req.headers["Expires"] = "0"
     req.headers['Cache-Control'] = 'public, max-age=0'
     return req
+
 
 @app.route('/messages/direct-message/new/<int:message_to_user_id>', methods=["GET", "POST"])
 def direct_messsage(message_to_user_id):
