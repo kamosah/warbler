@@ -20,7 +20,7 @@ On the back-end, user data and user profiles are stored in a PostgreSQL database
 2. `python3 seed.py`
 3. `flask run`
 
-**Here's an Entity Relationship Diagram of the Database Design:**
+**Database Design:**
 ![alt text](https://github.com/kamosah7/warbler/blob/master/images/warbler-erd.svg "Warbler ERD")
 
 Collaborators: https://github.com/oliviah0/
